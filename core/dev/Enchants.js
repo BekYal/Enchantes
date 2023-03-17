@@ -1,15 +1,28 @@
 IMPORT("EnchantsHelper");
-let LiveSteal = CustomEnchant.newEnchant("LiveSteal", Translation.translate("LiveSteal"))
-	.setMinMaxLevel(1, 3).setMask(MASK.ALL);
-	LiveSteal.setFrequency(1);
+var Chance = {
+executeWithChance: function(chance, code) {
+  if (Math.random() < chance) {
+    code();
+  }
+},
+ executeWithPercentChance: function(percent, code) {
+  if (Math.random() < percent / 100) {
+    code();
+  }
+}
+
+};
+
+var UnionToWater = CustomEnchant.newEnchant("UnionToWater", Translation.translate("Union to water"))
+	.setMinMaxCost(1, 3, 1, 3)
+	.setMinMaxLevel(1, 1)
+	.setMask(MASK.ARMOR).setFrequency(1);
+
+Enchants.onNaked(UnionToWater.id, function(item, enchantLevel, player) {
 	
-
-Enchants.addBook(LiveSteal.id, 1);
-
-Enchants.hurtOwner(LiveSteal.id, function (item, enchantLevel, attacker, victim, damageValue, damageType){
-	Game.message("h");
-}, 1);
-
-Enchants.hurt(LiveSteal.id, function(item, enchantLevel, attacker, victim, damageValue, damageType) {
-	Game.message(item.extra + "");
-}, 1);
+	
+	
+	Entity.addEffect(player, 1, 1, 30, false, false);
+	Entity.addEffect(player, 3, 1, 30, false, false);
+	Entity.addEffect(player, 5, 1, 30, false, false);
+})
