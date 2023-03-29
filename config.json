@@ -1,3 +1,11 @@
 {
-  "enabled":true
+	"enabled": false,
+	"Enchantes": {
+		"WarriorBlessing": true,
+		"Stunning": true,
+		"UnionToWater": true
+	},
+	"curses": {
+		"Blunt": true
+	}
 }
