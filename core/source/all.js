@@ -1,18 +1,16 @@
-function inWater() {
-	let playerr = Player.get();
-	let pos = Entity.getPosition(playerr);
-	pos = {
-		x: Math.floor(pos.x + .25),
-		z: Math.floor(pos.z + .25),
-		y: Math.floor(pos.y - .25),
-	};
-	if (World.getBlockID(pos.x, pos.y, pos.z) == 9 || World.getBlockID(pos.x, pos.y, pos.z) == 8) { return true } else { return false }
-}
 IMPORT("EnchantsHelper");
+function inWater() {
+	let playerr = Player.get(), getBlock = World.getBlockID(pos.x, pos.y, pos.z),  pos = Entity.getPosition(playerr);
+	
+	pos = { x: Math.floor(pos.x + .25), z: Math.floor(pos.z + .25), y: Math.floor(pos.y - .25) };
+	
+	if (getBlock == 9 || getBlock == 8) { return true } else { return false }
+}
 
 
-if (__config__.getBool("Enchants.healthRepair"))
-{
+
+
+if ( __config__.getBool("Enchants.healthRepair") ) {
 	var healthRepair = CustomEnchant.newEnchant("healthRepair", Translation.translate("healthRepair"))
 		.setMinMaxCost(1, 3, 1, 3)
 		.setMinMaxLevel(1, 2)
@@ -22,9 +20,7 @@ if (__config__.getBool("Enchants.healthRepair"))
 	Enchants.addBook(healthRepair.id);
 
 	Enchants.randomTick(healthRepair.id, function(player, item, enchantLevel) {
-		let helth = Entity.getHealth(player),
-			maxHealth = Entity.getMaxHealth(player),
-			minHealth = 6;
+		let helth = Entity.getHealth(player), maxHealth = Entity.getMaxHealth(player), minHealth = 6;
 		switch (enchantLevel) {
 			case 1:
 				if (health != minHealth) {
