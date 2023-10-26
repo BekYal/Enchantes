@@ -8,25 +8,29 @@ if(__config__.getBool("Enchants.Stunning"))
 	Enchants.addBook(Stunning.id);
 	
 	Enchants.hurt(Stunning.id, function(item, enchantLevel, attacker, victim, damageValue, damageType) {
-	switch (enchantLevel) {
-		case 1:
-			Chance.executeWithPercentChance(10, function() {
+		Chance.executeWithPercentChance(enchantLevel * 10, function() {
 				Entity.addEffect(victim, 2, 30, 60, false, false);
 				Entity.addEffect(victim, 18, 30, 60, false, false);
 			});
-			break;
-		case 2:
-			Chance.executeWithPercentChance(15, function() {
-				Entity.addEffect(victim, 2, 30, 80, false, false);
-				Entity.addEffect(victim, 18, 30, 80, false, false);
-			});
-			break;
-		case 3:
-			Chance.executeWithPercentChance(30, function() {
-				Entity.addEffect(victim, 2, 30, 100, false, false);
-				Entity.addEffect(victim, 18, 30, 100, false, false);
-			});
-			break;
-	}
+	// switch (enchantLevel) {
+	// 	case 1:
+	// 		Chance.executeWithPercentChance(10, function() {
+	// 			Entity.addEffect(victim, 2, 30, 60, false, false);
+	// 			Entity.addEffect(victim, 18, 30, 60, false, false);
+	// 		});
+	// 		break;
+	// 	case 2:
+	// 		Chance.executeWithPercentChance(15, function() {
+	// 			Entity.addEffect(victim, 2, 30, 80, false, false);
+	// 			Entity.addEffect(victim, 18, 30, 80, false, false);
+	// 		});
+	// 		break;
+	// 	case 3:
+	// 		Chance.executeWithPercentChance(30, function() {
+	// 			Entity.addEffect(victim, 2, 30, 100, false, false);
+	// 			Entity.addEffect(victim, 18, 30, 100, false, false);
+	// 		});
+	// 		break;
+	// }
 });
 	}
