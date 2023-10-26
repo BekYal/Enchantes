@@ -5,7 +5,7 @@ LIBRARY({
 	api: "CoreEngine"
 });
 var Curses = [28, 27];
-
+// Это чисто для моего удобства, не обрашайте внимание \\
 var Mask = {
 	axe: 512,
 	all: 16383,
@@ -25,19 +25,23 @@ var Mask = {
 	armor: 0 | 2 | 8 | 4,
 	weapons: 16 | 512
 };
-
+function Timer(ticks){
+	World.getThreadTime() % ticks == 0
+};
 IDRegistry.genItemID("enchanBook");
 Item.createItem("enchanBook", "enchantment book", { name: "book_enchanted" }, { stack: 1 });
 Item.setEnchantType('enchanBook', Mask.all, 5);
+
 Callback.addCallback("ServerPlayerTick", function (player) {
-	if(World.getThreadTime() % 100 == 0){
-	for (let y = 0; y <= 40; y++) {
-	let actor = new PlayerActor(player);
-	let item = actor.getInventorySlot(y);
-	if (item.extra && item.id == ItemID.enchanBook){
-		actor.setInventorySlot(y, 403, item.count, item.data, item.extra);
+	if( Timer(100) ){
+		for (let y = 0; y <= 40; y++) {
+			let actor = new PlayerActor(player),
+				item = actor.getInventorySlot(y);
+			if (item.extra && item.id == ItemID.enchanBook){
+				actor.setInventorySlot(y, 403, item.count, item.data, item.extra);
+			}
+		}
 	}
-	}}
 });
 var EnchantState = {
 	isCurse: function(enchant) {
@@ -84,12 +88,12 @@ var Chance = {
 	},
 	getChance: function(chance){
 		if (Math.random() < chance) {
-		return true;
+			return true;
 		} else {false}
 	},
 	getPercentChance: function(chance){
 		if (Math.random() < chance / 100) {
-		return true;
+			return true;
 		} else {false}
 	}
 };
