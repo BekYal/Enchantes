@@ -1,9 +1,7 @@
 IMPORT("EnchantsHelper");
 function inWater() {
 	let playerr = Player.get(), getBlock = World.getBlockID(pos.x, pos.y, pos.z),  pos = Entity.getPosition(playerr);
-	
 	pos = { x: Math.floor(pos.x + .25), z: Math.floor(pos.z + .25), y: Math.floor(pos.y - .25) };
-	
 	if (getBlock == 9 || getBlock == 8) { return true } else { return false }
 }
 
