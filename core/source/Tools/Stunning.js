@@ -1,5 +1,6 @@
 if(__config__.getBool("Enchants.Stunning"))
-{var Stunning = CustomEnchant.newEnchant("Stunning", Translation.translate("Stunning"))
+{
+var Stunning = CustomEnchant.newEnchant("Stunning", Translation.translate("Stunning"))
 	.setMinMaxCost(5, 10, 5, 10/*15, 30, 16, 30*/)
 	.setMinMaxLevel(1, 3)
 	.setMask(Mask.weapons)
