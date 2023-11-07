@@ -100,10 +100,17 @@ var Chance = {
 		else return false
 	}
 };
+var EnchantsLevels = [];
 
 var Enchants = {
-	setMaxLevel: function () {
-
+	setMaxLevel: function (name, level) {
+		EnchantsLevels.push([name, level]);
+	},
+	getMaxLevel: function(enchant){
+		for(let i = 0; i < 999; i++){
+			if(enchant == EnchantsLevels[i][0])
+				return Number(EnchantsLevels[i][1])
+		}
 	},
 	getCurses: function () {
 		return Curses;
