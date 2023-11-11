@@ -1,16 +1,14 @@
 IMPORT("EnchantsHelper");
-function inWater() {
-	let playerr = Player.get(), getBlock = World.getBlockID(pos.x, pos.y, pos.z),  pos = Entity.getPosition(playerr);
-	
-	pos = { x: Math.floor(pos.x + .25), z: Math.floor(pos.z + .25), y: Math.floor(pos.y - .25) };
-	
+function inWater(player) {
+	let getBlock = World.getBlockID(pos.x, pos.y, pos.z),  
+		pos = Entity.getPosition(player);
+	pos = { x: Math.floor(pos.x + .25), z: Math.floor(pos.z + .25), y: Math.floor(pos.y - .25) };	
 	if (getBlock == 9 || getBlock == 8) { return true } else { return false }
 }
 
 
 
 
-if ( __config__.getBool("Enchants.healthRepair") ) {
 	var healthRepair = CustomEnchant.newEnchant("healthRepair", Translation.translate("healthRepair"))
 		.setMinMaxCost(1, 3, 1, 3)
 		.setMinMaxLevel(1, 2)
@@ -20,28 +18,13 @@ if ( __config__.getBool("Enchants.healthRepair") ) {
 	Enchants.addBook(healthRepair.id);
 
 	Enchants.randomTick(healthRepair.id, function(player, item, enchantLevel) {
-		let helth = Entity.getHealth(player), maxHealth = Entity.getMaxHealth(player), minHealth = 6;
-		switch (enchantLevel) {
-			case 1:
-				if (health != minHealth) {
-					let rnd = Math.floor(Math.random() * 10);
-					Entity.setCarriedItem(player, item.id, count, item.data - rnd, item.extra);
-					Entity.setHealth(player, maxHealth = -rnd);
-				}
-				break;
-			case 2:
-				if (health != minHealth) {
-					let rnd = Math.floor(Math.random() * 20);
-					Entity.setCarriedItem(player, item.id, count, item.data - rnd, item.extra);
-					Entity.setHealth(player, maxHealth = -rnd);
-				}
-				break;
+		let helth = Entity.getHealth(player), maxHealth = Entity.getMaxHealth(player),  
+			minHealth = 3, rnd = Math.floor(Math.random() * enchantLevel);
+		if (health != minHealth) {
+			Entity.setCarriedItem(player, item.id, count, item.data - rnd, item.extra);
+			Entity.setHealth(player, maxHealth += rnd);
 		}
 	});
-}
-
-if (__config__.getBool("Enchants.UnionToWater"))
-{
 	var UnionToWater = CustomEnchant.newEnchant("UnionToWater", Translation.translate("Union to water"))
 		.setMinMaxCost(5, 10, 5, 10)
 		.setMinMaxLevel(1, 3)
@@ -52,8 +35,8 @@ if (__config__.getBool("Enchants.UnionToWater"))
 
 	Enchants.onNaked(UnionToWater.id, function(item, enchantLevel, player) {
 		let pos = Entity.getPosition(player);
-		let rt = BlockSource.getDefaultForActor(player);
-		if (inWater() || (rt.canSeeSky(pos.x, pos.y, pos.z) &&
+		let BlockS = BlockSource.getDefaultForActor(player);
+		if ( inWater() || (rt.canSeeSky(pos.x, pos.y, pos.z) &&
 				(World.getWeather().thunder || World.getWeather().rain))) {
 			switch (enchantLevel) {
 				case 1:
@@ -80,4 +63,3 @@ if (__config__.getBool("Enchants.UnionToWater"))
 			}
 		}
 	});
-}

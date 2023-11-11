@@ -70,15 +70,11 @@ var EnchantState = {
 		Callback.addCallback("ServerPlayerTick", function (player) {
 			for (let y = 0; y < 4; y++) {
 				let item = Entity.getArmorSlot(player, y);
-				if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
-					return true;
-				} else { return false }
+				if (item.extra && item.extra.getEnchantLevel(enchant) != 0) return true; else return false 
 			}
 		});
 	},
-};
-
-var Chance = {
+}, Chance = {
 	executeWithChance: function (chance, code) {
 		if (Math.random() < chance) {
 			code();
@@ -183,10 +179,13 @@ var Enchants = {
 			}
 		});
 	},
+	/**
+ 	* @param {number} enchant - Enchant ID
+ 	*/
 	onNaked: function (enchant, func) {
 		Callback.addCallback("ServerPlayerTick", function (player) {
 			for (let y = 0; y < 4; y++) {
-				let item = Entity.getArmorSlot(player, y);
+				var item = Entity.getArmorSlot(player, y);
 				if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
 					let enchantLevel = item.extra.getEnchantLevel(enchant);
 					func(item, enchantLevel, player);
@@ -203,17 +202,4 @@ EXPORT("Curses", Curses);
 EXPORT("Chance", Chance); //tnx gpt (много с шансами ебаться нажо будет, так шо мне не бесполезно) 
 
 
-/*Callback.addCallback("NativeCommand", function (cmd) {
-	var arr = cmd.split(" ");
-	var player = Player.get();
-	var item = Entity.getCarriedItem(player);
-		if (arr[0] == "/eenchant") {
-			let extra = new ItemExtraData();
-			extra.addEnchant(arr[1], arr[2]);
-			Entity.setCarriedItem(player, item.id, item.count, item.data, extra);
-	}
-});*/
 
-/*let extra = new ItemExtraData();
-			extra.addEnchant(enchant, i);
-			Item.addToCreative(ItemID.enchanBook, 1, 0, extra);*/
