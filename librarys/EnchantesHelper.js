@@ -7,6 +7,9 @@ LIBRARY({
 var Curses = [28, 27];
 
 // Это чисто для моего удобства, не обрашайте внимание \\
+/**
+ * @description Это чисто для моего удобства, не обрашайте внимание
+ */
 var Mask = {
 	axe: 512,
 	all: 16383,
@@ -26,7 +29,10 @@ var Mask = {
 	armor: 0 | 2 | 8 | 4,
 	weapons: 16 | 512
 };
-
+/**
+ * 
+ * @param {number} ticks 
+ */
 function Timer(ticks) {
 	World.getThreadTime() % ticks == 0
 };
@@ -35,7 +41,7 @@ IDRegistry.genItemID("enchanBook");
 Item.createItem("enchanBook", "enchantment book", { name: "book_enchanted" }, { stack: 1 });
 Item.setEnchantType('enchanBook', Mask.all, 5);
 
-Callback.addCallback("ServerPlayerTick", function (player) {
+Callback.addCallback("ServerPlayerTick", /**  @param {playerUID} player */ function (player) {
 	if (Timer(100)) {
 		for (let y = 0; y <= 40; y++) {
 			let actor = new PlayerActor(player),
@@ -90,6 +96,9 @@ var EnchantState = {
 			return true;
 		} else { false }
 	},
+	/**
+	 * @param {number} chance
+	 */
 	getPercentChance: function (chance) {
 		if (Math.random() < chance / 100)
 			return true
@@ -180,7 +189,8 @@ var Enchants = {
 		});
 	},
 	/**
- 	* @param {number} enchant - Enchant ID
+	 * @param {number} enchant
+	 * @param {callback} func
  	*/
 	onNaked: function (enchant, func) {
 		Callback.addCallback("ServerPlayerTick", function (player) {
