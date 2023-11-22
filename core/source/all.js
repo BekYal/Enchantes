@@ -1,83 +1,39 @@
 IMPORT("EnchantsHelper");
-function inWater() {
-	let playerr = Player.get(), getBlock = World.getBlockID(pos.x, pos.y, pos.z),  pos = Entity.getPosition(playerr);
-	
-	pos = { x: Math.floor(pos.x + .25), z: Math.floor(pos.z + .25), y: Math.floor(pos.y - .25) };
-	
-	if (getBlock == 9 || getBlock == 8) { return true } else { return false }
+
+function inWater(player) {
+	let pos = Entity.getPosition(player);
+	let getBlock = World.getBlockID(pos.x, pos.y, pos.z);
+	pos = {
+		x: Math.floor(pos.x + .25),
+		z: Math.floor(pos.z + .25),
+		y: Math.floor(pos.y - .25)
+	};
+	if (getBlock == 9 || getBlock == 8) return true
+	else return false
 }
 
 
+EnchantsHelper.randomTickEvent(HealthRepair.id, 'inHand', function (player, item, enchantLevel) {
+	let health = Entity.getHealth(player);
+	let maxHealth = Entity.getMaxHealth(player);
+	let minHealth = 3;
+	let rnd = Math.floor(Math.random() * (enchantLevel - 1.5));
 
+	if (health != minHealth) {
+		Entity.setCarriedItem(player, item.id, count, item.data - rnd, item.extra);
+		Entity.setHealth(player, maxHealth += rnd);
+	}
+}, 20, 20);
 
-if ( __config__.getBool("Enchants.healthRepair") ) {
-	var healthRepair = CustomEnchant.newEnchant("healthRepair", Translation.translate("healthRepair"))
-		.setMinMaxCost(1, 3, 1, 3)
-		.setMinMaxLevel(1, 2)
-		.setMask(Mask.tool)
-		.setFrequency(4);
-
-	Enchants.addBook(healthRepair.id);
-
-	Enchants.randomTick(healthRepair.id, function(player, item, enchantLevel) {
-		let helth = Entity.getHealth(player), maxHealth = Entity.getMaxHealth(player), minHealth = 6;
-		switch (enchantLevel) {
-			case 1:
-				if (health != minHealth) {
-					let rnd = Math.floor(Math.random() * 10);
-					Entity.setCarriedItem(player, item.id, count, item.data - rnd, item.extra);
-					Entity.setHealth(player, maxHealth = -rnd);
-				}
-				break;
-			case 2:
-				if (health != minHealth) {
-					let rnd = Math.floor(Math.random() * 20);
-					Entity.setCarriedItem(player, item.id, count, item.data - rnd, item.extra);
-					Entity.setHealth(player, maxHealth = -rnd);
-				}
-				break;
+Enchants.onNaked(UnionToWater.id, function (item, enchantLevel, player) {
+	let pos = Entity.getPosition(player);
+	let BlockS = BlockSource.getDefaultForActor(player);
+	let weather = World.getWeather();
+	if (inWater() || (BlockS.canSeeSky(pos.x, pos.y, pos.z) && (weather.thunder || weather.rain))) {
+		if (World.getThreadTime() % 150 == 0) {
+			Entity.addEffect(player, 1, enchantLevel * 1.4, 151, false, false);
+			Entity.addEffect(player, 5, enchantLevel * 1.4, 151, false, false);
+			Entity.addEffect(player, 3, enchantLevel * 1.5, 151, false, false);
 		}
-	});
-}
-
-if (__config__.getBool("Enchants.UnionToWater"))
-{
-	var UnionToWater = CustomEnchant.newEnchant("UnionToWater", Translation.translate("Union to water"))
-		.setMinMaxCost(5, 10, 5, 10)
-		.setMinMaxLevel(1, 3)
-		.setMask(Mask.armor)
-		.setFrequency(3);
-
-	Enchants.addBook(UnionToWater.id);
-
-	Enchants.onNaked(UnionToWater.id, function(item, enchantLevel, player) {
-		let pos = Entity.getPosition(player);
-		let rt = BlockSource.getDefaultForActor(player);
-		if (inWater() || (rt.canSeeSky(pos.x, pos.y, pos.z) &&
-				(World.getWeather().thunder || World.getWeather().rain))) {
-			switch (enchantLevel) {
-				case 1:
-					if (World.getThreadTime() % 100 == 0) {
-						Entity.addEffect(player, 1, 1, 100, false, false);
-						Entity.addEffect(player, 5, 1, 100, false, false);
-						Entity.addEffect(player, 3, 1, 100, false, false);
-					}
-					break;
-				case 2:
-					if (World.getThreadTime() % 100 == 0) {
-						Entity.addEffect(player, 1, 1, 100, false, false);
-						Entity.addEffect(player, 5, 2, 100, false, false);
-						Entity.addEffect(player, 3, 2, 100, false, false);
-					}
-					break;
-				case 3:
-					if (World.getThreadTime() % 100 == 0) {
-						Entity.addEffect(player, 1, 2, 100, false, false);
-						Entity.addEffect(player, 5, 2, 100, false, false);
-						Entity.addEffect(player, 3, 1, 100, false, false);
-					}
-					break;
-			}
-		}
-	});
-}
+	}
+});
