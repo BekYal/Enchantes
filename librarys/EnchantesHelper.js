@@ -38,7 +38,11 @@ function Timer(ticks) {
 };
 
 IDRegistry.genItemID("enchanBook");
-Item.createItem("enchanBook", "enchantment book", { name: "book_enchanted" }, { stack: 1 });
+Item.createItem("enchanBook", "enchantment book", {
+	name: "book_enchanted"
+}, {
+	stack: 1
+});
 Item.setEnchantType('enchanBook', Mask.all, 5);
 
 Callback.addCallback("ServerPlayerTick", /**  @param {playerUID} player */ function (player) {
@@ -53,67 +57,98 @@ Callback.addCallback("ServerPlayerTick", /**  @param {playerUID} player */ funct
 	}
 });
 var EnchantState = {
-	isCurse: function (enchant) {
-		for (var i = 0; i < Curses.length; i++) {
-			if (Curses[i] == enchant) {
-				return true;
-			}
-		}
-		return false;
-	},
-	inInv: function (enchant) {
-		Callback.addCallback("ServerPlayerTick", function (player) {
-			for (let y = 0; y <= 40; y++) {
-				let actor = new PlayerActor(player);
-				let item = actor.getInventorySlot(y);
-				if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+		isCurse: function (enchant) {
+			for (var i = 0; i < Curses.length; i++) {
+				if (Curses[i] == enchant) {
 					return true;
-				} else { return false }
+				}
 			}
-		});
+			return false;
+		},
+		inInv: function (enchant) {
+			Callback.addCallback("ServerPlayerTick", function (player) {
+				for (let y = 0; y <= 40; y++) {
+					let actor = new PlayerActor(player);
+					let item = actor.getInventorySlot(y);
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						return true;
+					} else {
+						return false
+					}
+				}
+			});
+		},
+		onNaked: function (enchant) {
+			Callback.addCallback("ServerPlayerTick", function (player) {
+				for (let y = 0; y < 4; y++) {
+					let item = Entity.getArmorSlot(player, y);
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) return true;
+					else return false
+				}
+			});
+		},
 	},
-	onNaked: function (enchant) {
-		Callback.addCallback("ServerPlayerTick", function (player) {
-			for (let y = 0; y < 4; y++) {
-				let item = Entity.getArmorSlot(player, y);
-				if (item.extra && item.extra.getEnchantLevel(enchant) != 0) return true; else return false 
+	Chance = {
+		executeWithChance: function (chance, code) {
+			if (Math.random() < chance) {
+				code();
 			}
-		});
-	},
-}, Chance = {
-	executeWithChance: function (chance, code) {
-		if (Math.random() < chance) {
-			code();
+		},
+		executeWithPercentChance: function (percent, code) {
+			if (Math.random() < percent / 100) {
+				code();
+			}
+		},
+		getChance: function (chance) {
+			if (Math.random() < chance) {
+				return true;
+			} else {
+				false
+			}
+		},
+		/**
+		 * @param {number} chance
+		 */
+		getPercentChance: function (chance) {
+			if (Math.random() < chance / 100)
+				return true
+			else return false
 		}
-	},
-	executeWithPercentChance: function (percent, code) {
-		if (Math.random() < percent / 100) {
-			code();
-		}
-	},
-	getChance: function (chance) {
-		if (Math.random() < chance) {
-			return true;
-		} else { false }
-	},
-	/**
-	 * @param {number} chance
-	 */
-	getPercentChance: function (chance) {
-		if (Math.random() < chance / 100)
-			return true
-		else return false
-	}
-};
+	};
 var EnchantsLevels = [];
+function randomer(number) {
+	Math.floor(Math.random() * (number));
+}
+
+
+
+Enchants2 = {
+	randomTickEvent: function(enchant, callbackName, func, minRnd, maxRnd) {
+	},
+	tickEvent: function(enchant, event, func, time) {
+	},
+	itemEvent: function(enchant, event, func) {
+	},
+	entityEvent: function(enchant, event, func) {
+	}
+}
+
 
 var Enchants = {
+	randomTick: (enchant, func) => {
+		Callback.addCallback("ServerPlayerTick", function(player, isPlayerDead){
+			if (Timer(randomer(400)) && isPlayerDead == false) {
+				let item = Entity.getCarriedItem(player);
+				
+			}
+		});
+	},
 	setMaxLevel: function (name, level) {
 		EnchantsLevels.push([name, level]);
 	},
-	getMaxLevel: function(enchant){
-		for(let i = 0; i < 999; i++){
-			if(enchant == EnchantsLevels[i][0])
+	getMaxLevel: function (enchant) {
+		for (let i = 0; i < 999; i++) {
+			if (enchant == EnchantsLevels[i][0])
 				return Number(EnchantsLevels[i][1])
 		}
 	},
@@ -191,7 +226,7 @@ var Enchants = {
 	/**
 	 * @param {number} enchant
 	 * @param {callback} func
- 	*/
+	 */
 	onNaked: function (enchant, func) {
 		Callback.addCallback("ServerPlayerTick", function (player) {
 			for (let y = 0; y < 4; y++) {
@@ -210,6 +245,3 @@ EXPORT("Mask", Mask);
 EXPORT("EnchantState", EnchantState);
 EXPORT("Curses", Curses);
 EXPORT("Chance", Chance); //tnx gpt (много с шансами ебаться нажо будет, так шо мне не бесполезно) 
-
-
-
