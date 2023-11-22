@@ -13,7 +13,7 @@ function inWater(player) {
 }
 
 
-EnchantsHelper.randomTickEvent(healthRepair.id, 'inHand', function (player, item, enchantLevel) {
+EnchantsHelper.randomTickEvent(HealthRepair.id, 'inHand', function (player, item, enchantLevel) {
 	let health = Entity.getHealth(player);
 	let maxHealth = Entity.getMaxHealth(player);
 	let minHealth = 3;
