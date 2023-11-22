@@ -13,7 +13,7 @@ function inWater(player) {
 }
 
 
-Enchants.randomTick(healthRepair.id, function (player, item, enchantLevel) {
+EnchantsHelper.randomTickEvent(healthRepair.id, 'inHand', function (player, item, enchantLevel) {
 	let health = Entity.getHealth(player);
 	let maxHealth = Entity.getMaxHealth(player);
 	let minHealth = 3;
@@ -23,7 +23,7 @@ Enchants.randomTick(healthRepair.id, function (player, item, enchantLevel) {
 		Entity.setCarriedItem(player, item.id, count, item.data - rnd, item.extra);
 		Entity.setHealth(player, maxHealth += rnd);
 	}
-});
+}, 20, 20);
 
 Enchants.onNaked(UnionToWater.id, function (item, enchantLevel, player) {
 	let pos = Entity.getPosition(player);

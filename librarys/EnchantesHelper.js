@@ -231,7 +231,185 @@ var Enchants = {
 	},
 };
 
+
+
+EnchantsHelper = {
+	randomTickEvent: function(enchant, callbackName, func, minRnd, maxRnd) {
+		Callback.addCallback("ServerPlayerTick", function(player) {
+			let actor = new PlayerActor(player);
+			switch (callbackName) {
+				case 'inInv':
+				case inInv:
+					if (World.getThreadTime() % Math.floor(Math.random() * (minRnd - maxRnd + 1)) == 0) {
+						for (let s = 0; s < 40; s++) {
+							let item = actor.getInventorySlot(s);
+							if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+								let enchantLevel = item.extra.getEnchantLevel(enchant);
+								func(player, item, enchantLevel);
+							}
+						}
+					}
+					break;
+				case 'inHand':
+				case inHand:
+					let item = Entity.getCarriedItem(player)
+					if (World.getThreadTime() % Math.floor(Math.random() * (minRnd - maxRnd + 1)) == 0 && item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(player, item, enchantLevel);
+					}
+					break;
+			}
+		});
+	},
+	tickEvent: function(enchant, event, func, time) {
+		Callback.addCallback("ServerPlayerTick", function(player) {
+			let actor = new PlayerActor(player),
+				item, enchantLevel;
+			if (World.getThreadTime() % (time || 20) == 0) {
+				switch (event) {
+					case onNkaed:
+					case 'onNaked':
+						for (let y = 0; y < 4; y++) {
+							item = Entity.getArmorSlot(player, y);
+							if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+								enchantLevel = item.extra.getEnchantLevel(enchant);
+								func(item, enchantLevel, player);
+							}
+						}
+						break;
+					case inInv:
+					case 'inInv':
+						for (let y = 0; y <= 40; y++) {
+							item = actor.getInventorySlot(y);
+							if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+								enchantLevel = item.extra.getEnchantLevel(enchant);
+								func(item, enchantLevel, player);
+							}
+						}
+						break;
+					case inHand:
+					case 'inHand':
+						item = Entity.getCarriedItem(player);
+						if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+							enchantLevel = item.extra.getEnchantLevel(enchant);
+							func(item, enchantLevel, player);
+						}
+						break;
+				}
+			}
+		});
+	},
+	itemEvent: function(enchant, event, func) {
+		switch (event) {
+			case click:
+			case 'click':
+				Callback.addCallback("ItemUse", function(coords, item, block, isExternal, player) {
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(enchantLevel, item, player, coords, block, isExternal);
+					}
+				});
+				break;
+			case useOnDestroy:
+			case 'useOnDestroy':
+				Callback.addCallback('DestroyBlock', function(coords, block, player) {
+					let item = Entity.getCarriedItem(player);
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(enchantLevel, item, player, coords, block);
+					}
+				});
+				break;
+			case targeting:
+			case 'targeting':
+				let activeTarget;
+				Callback.addCallback('ItemUseNoTarget', function(item, player) {
+					if (!activeTarget && item.extra && item.extra.getEnchantLevel(enchant) != 0)
+						activeTarget = true;
+				});
+				Callback.addCallback('ItemUsingReleased', function(item, player) {
+					if (activeTarget && item.extra && item.extra.getEnchantLevel(enchant) != 0)
+						activeTarget = false;
+				});
+				Callback.addCallback("ServerPlayerTick", function(player) {
+					let item = Entity.getCarriedItem(player);
+					let enchantLevel = item.extra.getEnchantLevel(enchant);
+					if (activeTarget && item.extra && item.extra.getEnchantLevel(enchant) != 0)
+						func(item, player);
+				});
+				break;
+			case targetRelease:
+			case 'targetRelease':
+				Callback.addCallback('ItemUsingReleased', function(item, player) {
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(enchantLevel, item, player);
+					}
+				});
+				break;
+			case targetUse:
+			case 'targetUse':
+				Callback.addCallback('ItemUseNoTarget', function(item, player) {
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(enchantLevel, item, player);
+					}
+				});
+				break;
+			case destroyItem:
+			case 'destroyItem':
+				Callback.addCallback("ServerPlayerTick", function(player) {
+					let item = Entity.getCarriedItem(player);
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0 & item.data >= Item.getmaxDamage(item.id)) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(enchantLevel, item, player);
+					}
+				});
+				break;
+			case hurt:
+			case 'hurt':
+				Callback.addCallback('EntityHurt', function(victim, attacker, damageValue, damageType) {
+					let item = Entity.getCarriedItem(attacker);
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(enchantLevel, item, attacker, victim, damageType);
+					}
+					
+				});
+				break;
+		}
+	},
+	entityEvent: function(enchant, event, func) {
+		switch (event) {
+			case entityKill:
+			case 'entityKill':
+				Callback.addCallback('EntityDeath', function(entity, attacker, damageType) {
+					let item = Entity.getCarriedItem(attacker);
+					if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+						let enchantLevel = item.extra.getEnchantLevel(enchant);
+						func(enchantLevel, item, attacker, entity, damageType);
+					}
+				});
+				break;
+			case itemEquipedDeath:
+			case 'itemEquipedDeath':
+				Callback.addCallback('EntityDeath', function(entity, attacker, damageType) {
+					for (let i = 0; i < 0; i++) {
+						let item = Entity.getArmorSlot(entity, i);
+						if (item.extra && item.extra.getEnchantLevel(enchant) != 0) {
+							let enchantLevel = item.extra.getEnchantLevel(enchant);
+						}
+					}
+				})
+				break;
+		}
+	}
+}
+
+
+
 EXPORT("Enchants", Enchants);
+EXPORT("EnchantsHelper", EnchantsHelper);
 EXPORT("Mask", Mask);
 EXPORT("EnchantState", EnchantState);
 EXPORT("Curses", Curses);
