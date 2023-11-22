@@ -122,16 +122,7 @@ function randomer(number) {
 
 
 
-Enchants2 = {
-	randomTickEvent: function(enchant, callbackName, func, minRnd, maxRnd) {
-	},
-	tickEvent: function(enchant, event, func, time) {
-	},
-	itemEvent: function(enchant, event, func) {
-	},
-	entityEvent: function(enchant, event, func) {
-	}
-}
+
 
 
 var Enchants = {
