@@ -126,7 +126,7 @@ function randomer(number) {
 
 
 var Enchants = {
-	randomTick: (enchant, func) => {
+	randomTick: function(enchant, func){
 		Callback.addCallback("ServerPlayerTick", function(player, isPlayerDead){
 			if (Timer(randomer(400)) && isPlayerDead == false) {
 				let item = Entity.getCarriedItem(player);
