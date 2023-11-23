@@ -22,7 +22,7 @@ var Blunt = CustomEnchant.newEnchant("Blunt", Translation.translate("Blunt"))
 var HealthRepair = CustomEnchant.newEnchant("HealthRepair", Translation.translate("HealthRepair"))
   .setMinMaxCost(1, 3, 1, 3)
   .setMinMaxLevel(1, 2)
-  .setMask(Mask.tool)
+  .setMask(Mask.all)
   .setFrequency(4);
 
 var UnionToWater = CustomEnchant.newEnchant("UnionToWater", Translation.translate("Union to water"))
