@@ -8,7 +8,7 @@ var WarriorBlessing = CustomEnchant
   .setFrequency(3);
   
 var Stunning = CustomEnchant.newEnchant("Stunning", Translation.translate("Stunning"))
-	.setMinMaxCost(5, 10, 5, 10/*15, 30, 16, 30*/)
+	.setMinMaxCost(5, 10, 5, 10)
 	.setMinMaxLevel(1, 3)
 	.setMask(Mask.weapons)
 	.setFrequency(4);
